@@ -1,0 +1,23 @@
+- dataset: https://ojs.aaai.org/index.php/ICWSM/article/view/7347/7201 (pushshift reddit dataset until December 2022)
+- take the submissions (top-level) and comments from r/captionthis --todo ask tim what dataset was precisely used--
+- match comments to submissions and only keep submissions with an image and >0 comments
+- try to download the image, only keep if image available (no 404 etc)
+- deduplicate images (and merge the comments)
+- move one previously undetected instance of imgur "image not found" image to the removed_404 dir
+- we will only use the top comment (highest reddit upvote score) in each submission thread
+- create_doccano_single_image_jsonl.py and import this dataset into doccano (top comment for each image, with descending score of the image post) to manually inspect them
+- block comments covered by the blocklist (and move them to a different directory, including images and meta if no more comments remain)
+
+datasets:
+
+https://github.com/cj-mills/pexels-dataset
+and
+https://huggingface.co/datasets/vera365/lexica_dataset
+
+
+alternatives:
+https://huggingface.co/datasets/xfh/lexica_6k
+https://github.com/unsplash/datasets
+https://huggingface.co/datasets/KoalaAI/StockImages-CC0
+
+

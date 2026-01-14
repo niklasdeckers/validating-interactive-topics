@@ -1,0 +1,11 @@
+flask
+pillow
+imagehash
+tqdm
+pandas
+requests
+torch
+torchvision
+transformers
+faiss-cpu
+numpy
