@@ -3,8 +3,10 @@ from flask import Flask, send_file, abort
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import numpy as np
+import re
 
-IMAGE_DIR = "./output/images"
+
+IMAGE_DIRS = {"reddit": "./output/images", "lexica": "", "pexels": ""}
 FONT_PATH = "./fonts/DejaVuSans.ttf"  # bundled font
 PORT = 8080
 MAX_HEIGHT = 1000
@@ -166,22 +168,51 @@ def stitch_images(image_paths):
 
 
 
-@app.route("/<filename>")
+# allow only simple, safe filenames like: 234.jpg, sun_003.png, img-12.jpeg, etc.
+SAFE_FILENAME = re.compile(r"^[A-Za-z0-9_.-]+\.(jpg|jpeg|png)$", re.IGNORECASE)
+
+@app.route("/<path:filename>")
 def handle_request(filename):
-    if not filename.endswith(".jpg"):
-        abort(400, "Only .jpg requests are supported")
 
-    stem = filename[:-4]
-    ids = stem.split("_")
+    # overall check: final request must still end in an image extension
+    if not filename.lower().endswith((".jpg", ".jpeg", ".png")):
+        abort(400, "Only image requests are supported")
 
-    if len(ids) < 1:
-        abort(400, "At least one image id is required")
+    parts = filename.split("+")
+    if not parts:
+        abort(400, "At least one image is required")
 
-    image_paths = [os.path.join(IMAGE_DIR, f"{img_id}_image.jpg") for img_id in ids]
-    for path in image_paths:
-        if not os.path.exists(path):
-            abort(404, f"Missing source image: {os.path.basename(path)}")
+    image_paths = []
 
+    for part in parts:
+        try:
+            dataset, img_name = part.split("/", 1)
+        except ValueError:
+            abort(400, f"Bad format: {part}. Expected dataset/filename.jpg")
+
+        if dataset not in IMAGE_DIRS:
+            abort(404, f"Unknown dataset: {dataset}")
+
+        # ---- WHITELIST CHECK (your request) ----
+        if not SAFE_FILENAME.match(img_name):
+            abort(400, f"Invalid filename: {img_name}")
+
+        # ---- Build candidate path ----
+        candidate = os.path.join(IMAGE_DIRS[dataset], img_name)
+
+        # ---- ABSOLUTE PATH CONTAINMENT CHECK (real security) ----
+        candidate = os.path.abspath(candidate)
+        root = os.path.abspath(IMAGE_DIRS[dataset])
+
+        if not candidate.startswith(root + os.sep):
+            abort(400, "Path traversal attempt detected")
+
+        if not os.path.exists(candidate):
+            abort(404, f"Missing source image: {candidate}")
+
+        image_paths.append(candidate)
+
+    # --- unchanged stitching logic ---
     stitched = stitch_images(image_paths)
 
     buf = BytesIO()
