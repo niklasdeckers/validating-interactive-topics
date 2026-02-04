@@ -6,13 +6,15 @@ from PIL import Image
 from tqdm import tqdm
 from transformers import CLIPProcessor, CLIPModel
 import pickle
+from datasets import load_dataset
 import json
+from pathlib import Path
 
 # -----------------------------
 # CONFIG
 # -----------------------------
-IMAGE_DIR = "output/images"
-COMMENTS_DIR = "output/comments"
+DATASET_PATH = "/mnt/ceph/storage/corpora/corpora-thirdparty/corpus-lexica-generated-images/data"
+IMAGE_OUT_DIR = "/var/tmp/deckersn/lexica/images"
 
 IMAGE_INDEX_FILE = "faiss_image_index.index"
 TEXT_INDEX_FILE = "faiss_text_index.index"
@@ -32,19 +34,24 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 # STEP 1: EMBED IMAGES
 # -----------------------------
 print("Embedding images...")
-image_paths = [os.path.join(IMAGE_DIR, f) for f in os.listdir(IMAGE_DIR) if f.endswith("_image.jpg")]
+dataset = load_dataset(DATASET_PATH, split='train')
+
+Path(IMAGE_OUT_DIR).mkdir(parents=True, exist_ok=True)
 
 image_embeddings_dict = {}  # id -> embedding
 image_ids = []
 
-for img_path in tqdm(image_paths, desc="Images"):
-    id_ = os.path.basename(img_path).split("_image.jpg")[0]
+for entry in tqdm(dataset, desc="Images"):
+    id_ = entry["id"]
     image_ids.append(id_)
 
-    image = Image.open(img_path).convert("RGB")
+    image = entry["image"].convert("RGB")
+    
+    image.save(os.path.join(IMAGE_OUT_DIR, id_+".jpg"))
+    
     inputs = processor(images=image, return_tensors="pt").to(DEVICE)
     with torch.no_grad():
-        embedding = model.get_image_features(**inputs)
+        embedding = model.get_image_features(**inputs)["pooler_output"]
         embedding = embedding / embedding.norm(dim=-1, keepdim=True)
     image_embeddings_dict[id_] = embedding.cpu().numpy().flatten()  # store as 1D array
 
@@ -71,31 +78,22 @@ print("Embedding comment texts...")
 
 text_embeddings_dict = {}  # text string -> embedding
 
-for comment_file in tqdm(os.listdir(COMMENTS_DIR), desc="Comments"):
-    if not comment_file.endswith("_comments.jsonl"):
-        continue
+for entry in tqdm(dataset, desc="Prompts"):
 
-    comment_path = os.path.join(COMMENTS_DIR, comment_file)
+    prompt = entry["prompt"]
     
-    with open(comment_path, "r") as f:
-        for line in f:
-            comment = json.loads(line)
-            body = comment.get("body", "").strip()
-            if not body:
-                continue
-
-            inputs = processor(
-                text=body,
-                return_tensors="pt",
-                padding=True,
-                truncation=True,   # truncate to model max
-                max_length=77
-            ).to(DEVICE)
-            
-            with torch.no_grad():
-                embedding = model.get_text_features(**inputs)
-                embedding = embedding / embedding.norm(dim=-1, keepdim=True)
-            text_embeddings_dict[body] = embedding.cpu().numpy().flatten()
+    inputs = processor(
+        text=prompt,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,   # truncate to model max
+        max_length=77
+    ).to(DEVICE)
+    
+    with torch.no_grad():
+        embedding = model.get_text_features(**inputs)["pooler_output"]
+        embedding = embedding / embedding.norm(dim=-1, keepdim=True)
+    text_embeddings_dict[prompt] = embedding.cpu().numpy().flatten()
 
 # Build FAISS index for text
 if text_embeddings_dict:

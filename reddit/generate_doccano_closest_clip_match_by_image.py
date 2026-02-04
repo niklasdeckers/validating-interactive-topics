@@ -8,11 +8,12 @@ import numpy as np
 # -----------------------------
 # CONFIG
 # -----------------------------
+DATASET_PREFIX = "reddit"
 META_DIR = "output/meta"
 COMMENTS_DIR = "output/comments"
-OUTPUT_FILE = "doccano_closest_clip_match_by_image.jsonl"
-SWAP_LOG_FILE = "groundtruth_closest_clip_match_by_image.json"
-GAMMA_DOMAIN = "http://gammaweb05:8080"
+OUTPUT_FILE = f"doccano_{DATASET_PREFIX}_closest_clip_match_by_image.jsonl"
+SWAP_LOG_FILE = f"groundtruth_{DATASET_PREFIX}_closest_clip_match_by_image.json"
+GAMMA_DOMAIN = "http://gammaweb09.medien.uni-weimar.de:8080"
 SEED = 42
 
 IMAGE_INDEX_FILE = "faiss_image_index.index"
@@ -86,7 +87,7 @@ for meta_file in os.listdir(META_DIR):
     # Build line dict
     line_dict = {
         "text": top_comment_text or "",
-        "im_url": f"{GAMMA_DOMAIN}/{id_}_{id2}.jpg",
+        "im_url": f"{GAMMA_DOMAIN}/{DATASET_PREFIX}/{id_}_image.jpg+{DATASET_PREFIX}/{id2}_image.jpg",
         "id": counter,
         "meta_score": meta_score
     }

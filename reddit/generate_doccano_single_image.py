@@ -2,10 +2,11 @@ import json
 import os
 from glob import glob
 
+DATASET_PREFIX = "reddit"
 META_DIR = "output/meta"
 COMMENTS_DIR = "output/comments"
-OUTPUT_FILE = "doccano_single_image.jsonl"
-BASE_URL = "http://gammaweb05:8080"
+OUTPUT_FILE = f"doccano_{DATASET_PREFIX}_single_image.jsonl"
+BASE_URL = "http://gammaweb09.medien.uni-weimar.de:8080"
 
 def load_jsonl(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -54,7 +55,7 @@ for meta_path in meta_files:
 
     records.append({
         "text": best_comment["body"],
-        "im_url": f"{BASE_URL}/{id_}.jpg",
+        "im_url": f"{BASE_URL}/{DATASET_PREFIX}/{id_}_image.jpg",
         "score": best_score  # keep score for sorting
     })
     print(f"[DEBUG] Collected record with score={best_score}")

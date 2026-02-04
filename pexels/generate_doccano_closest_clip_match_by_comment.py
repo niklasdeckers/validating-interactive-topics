@@ -9,11 +9,12 @@ from tqdm import tqdm
 # -----------------------------
 # CONFIG
 # -----------------------------
-META_DIR = "output/meta"
-COMMENTS_DIR = "output/comments"
-OUTPUT_FILE = "doccano_closest_clip_match_by_comment.jsonl"
-SWAP_LOG_FILE = "groundtruth_closest_clip_match_by_comment.json"
-GAMMA_DOMAIN = "http://gammaweb05:8080"
+DATASET_PREFIX = "pexels"
+PROMPTS_JSON_PATH = "/var/tmp/deckersn/pexels/pexels-110k-768p-min-jpg/pexels-prompts-pairs.json"
+IMAGE_DIR = "/var/tmp/deckersn/pexels/pexels-110k-768p-min-jpg/images"
+OUTPUT_FILE = f"doccano_{DATASET_PREFIX}_closest_clip_match_by_comment.jsonl"
+SWAP_LOG_FILE = f"groundtruth_{DATASET_PREFIX}_closest_clip_match_by_comment.json"
+GAMMA_DOMAIN = "http://gammaweb09.medien.uni-weimar.de:8080"
 SEED = 42
 
 IMAGE_INDEX_FILE = "faiss_image_index.index"
@@ -50,45 +51,18 @@ lines = []
 swap_log = {}
 counter = 0
 
-for meta_file in tqdm(os.listdir(META_DIR), desc="Processing meta files"):
-    if not meta_file.endswith("_meta.json"):
-        continue
+with open(PROMPTS_JSON_PATH, 'r') as file:
+    prompt_lines = json.load(file)
 
-    id_ = meta_file.split("_meta.json")[0]
+id_dict = {f.split(".")[0].split("-")[-1]: f for f in os.listdir(IMAGE_DIR)}
 
-    # Load meta
-    meta_path = os.path.join(META_DIR, meta_file)
-    with open(meta_path, "r") as f:
-        meta_data = json.load(f)
-    meta_score = meta_data.get("score", 0)
+for line in tqdm(prompt_lines, desc="Prompts"):
+    id_raw = list(line.keys())[0]
+    if not id_raw in id_dict: continue
+    id_ = id_dict[id_raw]
+    prompt = list(line.values())[0]
 
-    # Load top comment
-    comments_file = os.path.join(COMMENTS_DIR, f"{id_}_comments.jsonl")
-    if not os.path.exists(comments_file):
-        continue
-
-    top_comment_text = None
-    top_comment_score = float("-inf")
-    top_comment_raw = None
-    with open(comments_file, "r") as f:
-        for line in f:
-            comment = json.loads(line)
-            score = comment.get("score", 0)
-            if score > top_comment_score:
-                top_comment_score = score
-                top_comment_text = comment.get("body", "")
-                top_comment_raw = comment.get("body", "")
-
-    if not top_comment_text:
-        continue
-
-    # -----------------------------
-    # FIND IMAGE MATCH FOR COMMENT
-    # -----------------------------
-    if top_comment_raw not in text_embeddings_dict or id_ not in image_embeddings_dict:
-        continue
-
-    comment_emb = text_embeddings_dict[top_comment_raw].reshape(1, -1).astype("float32")
+    comment_emb = text_embeddings_dict[prompt].reshape(1, -1).astype("float32")
 
     # Search nearest image by comment embedding
     D, I = image_index.search(comment_emb, k=2)  # get top 2 neighbors
@@ -118,10 +92,9 @@ for meta_file in tqdm(os.listdir(META_DIR), desc="Processing meta files"):
 
     # Build line dict
     line_dict = {
-        "text": top_comment_text,
-        "im_url": f"{GAMMA_DOMAIN}/{id_}_{id2}.jpg",
-        "id": counter,
-        "meta_score": meta_score
+        "text": prompt or "",
+        "im_url": f"{GAMMA_DOMAIN}/{DATASET_PREFIX}/{id_}+{DATASET_PREFIX}/{id2}",
+        "id": counter
     }
     lines.append(line_dict)
 
@@ -134,8 +107,9 @@ for meta_file in tqdm(os.listdir(META_DIR), desc="Processing meta files"):
 
     counter += 1
 
-# Sort by meta_score descending
-lines.sort(key=lambda x: x["meta_score"], reverse=True)
+# Sort randomly
+random.seed(SEED)
+random.shuffle(lines)
 
 # Write JSONL
 with open(OUTPUT_FILE, "w") as f:

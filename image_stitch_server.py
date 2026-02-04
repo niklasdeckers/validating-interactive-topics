@@ -6,7 +6,7 @@ import numpy as np
 import re
 
 
-IMAGE_DIRS = {"reddit": "./output/images", "lexica": "", "pexels": ""}
+IMAGE_DIRS = {"reddit": "./reddit/output/images", "lexica": "/var/tmp/deckersn/lexica/images", "pexels": "/var/tmp/deckersn/pexels/pexels-110k-768p-min-jpg/images"}
 FONT_PATH = "./fonts/DejaVuSans.ttf"  # bundled font
 PORT = 8080
 MAX_HEIGHT = 1000
