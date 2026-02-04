@@ -21,3 +21,10 @@ https://github.com/unsplash/datasets
 https://huggingface.co/datasets/KoalaAI/StockImages-CC0
 
 
+
+
+For unpacking the image datasets to /var/tmp:
+unzip /mnt/ceph/storage/corpora/corpora-thirdparty/corpus-pexels-stock-images/pexels-110k-768p-min-jpg.zip -d /var/tmp/deckersn/pexels
+cd lexica && python3 build_index.py
+
+
