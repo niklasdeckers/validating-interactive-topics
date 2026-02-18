@@ -6,7 +6,7 @@ Currently, the dataset is hosted here: [https://files.webis.de/data-in-progress/
 
 The file structure of the data.zip can be integrated with this repository.
 
-To simply access the textual image descriptions (to form *iterative topics*), see the `[reddit|pexels|lexica]/doccano_*_single_image.jsonl` files.
+To simply access the textual image descriptions (to form *interactive topics*), see the `[reddit|pexels|lexica]/doccano_*_single_image.jsonl` files.
 
 
 ## Recreating the dataset
