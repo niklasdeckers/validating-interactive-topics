@@ -11,7 +11,7 @@ To simply access the textual image descriptions (to form *interactive topics*), 
 
 ## Recreating the dataset
 
-To reproduce the full extraction pipeline, the `reddit/comments.jsonl` and `reddit/submissions.jsonl` need to be extracted from previously downloaded [Pushshift dataset](https://ojs.aaai.org/index.php/ICWSM/article/view/7347/7201) using the script described in `pushshift/`.
+To reproduce the full extraction pipeline, the `reddit/comments.jsonl` and `reddit/submissions.jsonl` need to be extracted from the previously downloaded [Pushshift dataset](https://ojs.aaai.org/index.php/ICWSM/article/view/7347/7201) using the script described in `pushshift/`.
 
 The following steps should then be applied to create the provided dataset of r/captionthis data:
 - Match top-level threads with image urls and comments and download the images using the `reddit/match_comments_submissions.py` script.
