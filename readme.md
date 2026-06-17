@@ -10,7 +10,7 @@ To build such topics, this repository provides (1) the software needed to re-cre
 
 ### FAIR Research
 
-We make our research data *findable* (through our paper, metadata and identifiers), *accessible* (by hosting the dataset and its description on [Zenodo](https://doi.org/10.5281/zenodo.20574978)), *interoperable* (by using file formats such as json and jsonl) and *reusable* (by providing scripts in this repository to use and reproduce our data and by using permissive licenses).
+We make our research data *findable* (through our paper, metadata and identifiers), *accessible* (by hosting the dataset and its description on [Zenodo](https://doi.org/10.5281/zenodo.20574977)), *interoperable* (by using file formats such as json and jsonl) and *reusable* (by providing scripts in this repository to use and reproduce our data and by using permissive licenses).
 
 ## Our Dataset
 
@@ -18,7 +18,7 @@ Our dataset consists of three parts: (1) A set of topics formed by extracting th
 
 ### Accessing the Dataset
 
-The dataset that belongs to this repository can be found on Zenodo: https://doi.org/10.5281/zenodo.20574978
+The dataset associated with this repository can be found on Zenodo: https://doi.org/10.5281/zenodo.20574977
 
 After downloading the zip file, it should be unpacked and integrated into the folder structure of this repository.
 
@@ -26,7 +26,7 @@ To simply access the textual image descriptions (to form *interactive topics*), 
 
 ### Datasheet
 
-A full description of the dataset file structure and its Datasheet can be found in the resource description on Zenodo (https://doi.org/10.5281/zenodo.20574978).
+A full description of the dataset file structure and its Datasheet can be found in the resource description on Zenodo (https://doi.org/10.5281/zenodo.20574977).
 
 
 ### Reproducing the Dataset
@@ -85,7 +85,7 @@ Assessors are assigned one of the two personas and asked which of the two image 
 
 ### Results
 
-For an initial agreement study, three assessors each annotated the first 100 samples for each of the three datasets with one of the two personas given above (swapping the personas after 50 samples). The results can be seen in the following table:
+For an initial agreement study, three assessors each annotated the first 100 samples for each of the three datasets with one of the two personas given above (swapping the personas after 50 samples). The results are summarized in the following table:
 
 |                        | r/captionthis | Pexels | Lexica |
 |------------------------|---------------|--------|--------|
@@ -94,9 +94,7 @@ For an initial agreement study, three assessors each annotated the first 100 sam
 | (2): Everyone agrees   |     44          |     43   |     41   |  
 | (3): Equal personas agree |        31       |   35     |   31     |  
 
-The results show a notable difference between both personas in the agreement of assessors with the same persona only on r/captionthis, with a higher agreement for the persona Kevin. This suggest that personas work well if they are tailored to the domain. This result lays the foundation for a more large-scale experiment with individual persona pairs for each dataset sample.
-
-Our initial validation experiment suggests that persona descriptions are best formulated individually for each topic, for which automated methods might be useful.
+The results show a notable difference between both personas in the agreement of assessors with the same persona only on r/captionthis, with a higher agreement for the persona Kevin. This suggests that personas work well if they are tailored to the domain. This result lays the foundation for a more large-scale experiment with individual persona pairs for each dataset sample, for which automated methods might be useful.
 
 ### Technical Implementation
 
