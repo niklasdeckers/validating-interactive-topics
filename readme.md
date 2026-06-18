@@ -105,3 +105,14 @@ The annotation experiment described above is based on the `doccano_*_closest_cli
 
 Using the `annotation/create_gallery.py` script, a html page displaying the images by the classes implied by the annotation results can be created.
 
+
+## Evaluating Iterative Generative Systems
+
+The goal of this evaluation is to compare different iterative generative systems (such as *query refinement on image search*, *prompt engineering for image generation*, or specialized systems such as the one introduced by [Deckers et al. (2024)](https://doi.org/10.24963/ijcai.2024/845)) despite the different ways that users interact with them to arrive at a final result. The *interactive topics* contributed with this resource form the basis of such an evaluation.
+
+### Experimental Setup
+
+One experiment involves a number of systems, human assessors, and different topics.
+Evaluating systems using our *interactive topics* works similar to how interactive IR systems are evaluated, e.g., in [TREC](https://www.nist.gov/publications/trec-6-interactive-track-report), since we face similar issues:
+As described by [Kelly (2019)](https://doi.org/10.1561/1500000012), having all assessors evaluate all systems on all topics is not feasible: Rotation and counterbalancing are required to mitigate the effect of assessors seeing one system before another; topic splitting allows to avoid biases between topics; and asking for relative judgments instead of absolute ratings helps to reduce scale bias.
+
