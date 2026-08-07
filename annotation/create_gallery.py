@@ -3,6 +3,8 @@ from pathlib import Path
 from collections import defaultdict
 
 USERS_OF_INTEREST = ["thagen", "deckersn", "kgutekunst"]
+# For our experiment, annotators thagen and deckersn received persona "Barbara" for entries 1-50 and persona "Kevin" for entries 51-100.
+# Annotator kgutekunst received persona "Kevin" for entries 1-50 and persona "Barbara" for entries 51-100.
 
 def bucket_for_id(t, d, k):
     if t != d:
