@@ -114,5 +114,5 @@ The goal of this evaluation is to compare different iterative generative systems
 
 One experiment involves a number of systems, human assessors, and different topics.
 Evaluating systems using our *interactive topics* works similar to how interactive IR systems are evaluated, e.g., in [TREC](https://www.nist.gov/publications/trec-6-interactive-track-report), since we face similar issues:
-As described by [Kelly (2019)](https://doi.org/10.1561/1500000012), having all assessors evaluate all systems on all topics is not feasible: Rotation and counterbalancing are required to mitigate the effect of assessors seeing one system before another; topic splitting allows to avoid biases between topics; and asking for relative judgments instead of absolute ratings helps to reduce scale bias.
+As described by [Kelly (2009)](https://doi.org/10.1561/1500000012), having all assessors evaluate all systems on all topics is not feasible: Rotation and counterbalancing are required to mitigate the effect of assessors seeing one system before another; topic splitting allows to avoid biases between topics; and asking for relative judgments instead of absolute ratings helps to reduce scale bias.
 
